@@ -1,6 +1,6 @@
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import React, {Component} from 'react';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 import './styles.css';
@@ -67,33 +67,50 @@ class Display_components extends Component {
 
 		let table = (<div><div className="panel b block-center text-center"> <h3> You do not have any Data </h3> </div> </div>);
 		if (this.props.state.components.Components && this.props.state.components.Components.length) {
-			table = (	<BootstrapTable data={this.props.state.components.Components}
-														pagination={true}
-														striped={true}
-														search={true}
-														exportCSV={true}
-														hover={true}>
-							<TableHeaderColumn isKey={true} hidden={true} dataSort={true} dataField="Id">#</TableHeaderColumn>
-							<TableHeaderColumn width="120" dataSort={true} dataField="Serial_no">Serial</TableHeaderColumn>
-							<TableHeaderColumn width="120" dataSort={true} dataField="Name" dataFormat={componentInformation}>Name</TableHeaderColumn>
-							<TableHeaderColumn width="70" dataSort={true} dataField="Active">Active</TableHeaderColumn>
-							<TableHeaderColumn width="150" dataSort={true} dataField="Category">Category</TableHeaderColumn>
-							<TableHeaderColumn width="140" dataField="Warranty_till">Warranty Till(Y-M-D)</TableHeaderColumn>
-							<TableHeaderColumn hidden={true} dataField="invoice_id">Invoice</TableHeaderColumn>
-							<TableHeaderColumn width="240" dataSort={true} dataField="Description">Description</TableHeaderColumn>
-							<TableHeaderColumn width="150" dataSort={true} dataField="Machine">Machine</TableHeaderColumn>
-						</BootstrapTable>
-					);
+			table = (	<BootstrapTable
+									data={this.props.state.components.Components}
+									exportCSV={true}
+									hover={true}
+									pagination={true}
+									striped={true}
+									search={true}>
+									<TableHeaderColumn isKey={true} hidden={true} dataSort={true} dataField="Id">#</TableHeaderColumn>
+									<TableHeaderColumn width="120" dataSort={true} dataField="Serial_no">Serial</TableHeaderColumn>
+									<TableHeaderColumn width="190" dataSort={true} dataField="Name" dataFormat={componentInformation}>Name</TableHeaderColumn>
+									<TableHeaderColumn width="70" dataSort={true} dataField="Active">Active</TableHeaderColumn>
+									<TableHeaderColumn width="150" dataSort={true} dataField="Category">Category</TableHeaderColumn>
+									<TableHeaderColumn width="140" dataField="Warranty_till">Warranty Till(Y-M-D)</TableHeaderColumn>
+									<TableHeaderColumn hidden={true} dataField="invoice_id">Invoice</TableHeaderColumn>
+									<TableHeaderColumn width="200" dataSort={true} dataField="Description">Description</TableHeaderColumn>
+									<TableHeaderColumn width="150" dataSort={true} dataField="Machine">Machine</TableHeaderColumn>
+								</BootstrapTable>
+							);
 		}
 
 		return (
 			<div>
 				<div className= "clearfix setPadding">
 					<div className="pull-left" >
-						<Select searchable={ false } clearable={ false } placeholder="Active" value={ this.state.activeAll } options={ options } style={ activeStyle } onChange={ this.filterComponents }/>
+						<Select
+							clearable={ false }
+							options={ options }
+							onChange={ this.filterComponents }
+							placeholder="Active"
+							searchable={ false }
+							style={ activeStyle }
+							value={ this.state.activeAll }
+						/>
 					</div>
 					<div className="pull-right">
-						<Select searchable={ false } clearable={ false } value={ this.state.category } placeholder="Filter By Category" options={ categories } style={ categoryStyle } onChange={ this.handleCategoryChange }/>
+						<Select
+							clearable={ false }
+							options={ categories }
+							onChange={ this.handleCategoryChange }
+							placeholder="Filter By Category"
+							style={ categoryStyle }
+							searchable={ true }
+							value={ this.state.category }
+						/>
 					</div>
 				</div>
 				<div className="clearfix">

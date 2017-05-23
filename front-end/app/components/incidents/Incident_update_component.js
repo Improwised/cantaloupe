@@ -4,8 +4,6 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import Select from 'react-select';
 import { Link } from 'react-router';
 import { HelpBlock } from 'react-bootstrap'
-import moment from 'moment';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-select/dist/react-select.css';
 import './styles.css';
@@ -24,7 +22,6 @@ class Add_incident_update extends Component {
 		this.handleFields = this.handleFields.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleAddComponent = this.handleAddComponent.bind(this);
-		this.handleWarrantyDateChange = this.handleWarrantyDateChange.bind(this);
 		this.handleCategoryChange = this.handleCategoryChange.bind(this);
 		this.handleResolveIncident = this.handleResolveIncident.bind(this);
 	}
@@ -98,13 +95,8 @@ class Add_incident_update extends Component {
 		//==========================================================================
 
 		if (status) {
-			this.props.actions.addReplacedComponent(incidentId, resolvedBy, description, component, category, serial, warranty);
+			this.props.actions.addReplacedComponent(incidentId, resolvedBy, description, component, category, serial);
 		}
-	}
-
-	handleWarrantyDateChange(date) {
-		let id = `warranty`
-		this.props.actions.setFieldValue(id, date);
 	}
 
 	handleCategoryChange(event) {
@@ -134,11 +126,6 @@ class Add_incident_update extends Component {
 	}
 
 	render() {
-		let warrantyDate = moment();
-		if(this.props.state.incidents.warranty) {
-			warrantyDate = this.props.state.incidents.warranty;
-		}
-
 		let categories = [];
 		for(let i = 0; i < this.props.state.category.AllCategories.length; i++){
 			let ComponentInfo = { value : this.props.state.category.AllCategories[i].Id, label: this.props.state.category.AllCategories[i].Category };
@@ -177,31 +164,86 @@ class Add_incident_update extends Component {
 								<h4 className="modal-title center">Add Component</h4>
 							</div>
 							<div className="modal-body">
-								<input type="text" name="ResolvedBy" id="resolvedBy" placeholder="Update By" onChange={ this.handleFields } className="textBoxWidth"/>
+
+								<input
+									className="textBoxWidth"
+									id="resolvedBy"
+									name="ResolvedBy"
+									onChange={ this.handleFields }
+									placeholder="Update By"
+									type="text"
+								/>
+
 								<HelpBlock className="errFontStyle"> {this.state.updateByErr} </HelpBlock>
 							</div>
 							<div className="modal-body">
-								<input type="text" name="SerialNo" id="serialNo" placeholder="Serial No." onChange={ this.handleFields } className="textBoxWidth"/>
+
+								<input
+									className="textBoxWidth"
+									id="serialNo"
+									name="SerialNo"
+									onChange={ this.handleFields }
+									placeholder="Serial No."
+									type="text"
+								/>
+
 								<HelpBlock className="errFontStyle"> {this.state.serialErr} </HelpBlock>
 							</div>
 							<div className="modal-body">
-								<input type="text" name="Component" id="component" placeholder="Component Name" onChange={ this.handleFields } className="textBoxWidth"/>
+
+								<input
+									className="textBoxWidth"
+									id="component"
+									name="Component"
+									onChange={ this.handleFields }
+									placeholder="Component Name"
+									type="text"
+								/>
+
 								<HelpBlock className="errFontStyle"> {this.state.componentErr} </HelpBlock>
 							</div>
 							<div className="modal-body">
-								<Select className="selectcss" id={`category`} value={ category } placeholder="Category" clearable={ false } options={ categories } onChange={ this.handleCategoryChange }/>
+
+								<Select
+									className="selectcss"
+									clearable={ false }
+									id={`category`}
+									options={ categories }
+									onChange={ this.handleCategoryChange }
+									placeholder="Category"
+									value={ category }
+								/>
+
 								<HelpBlock className="errFontStyle"> {this.state.categoryErr} </HelpBlock>
 							</div>
 							<div className="modal-body">
-								<DatePicker className="textboxSize" name="Warranty" id="warranty" dateFormat="DD/MM/YYYY" selected={ warrantyDate } onChange={this.handleWarrantyDateChange} />
-							</div>
-							<div className="modal-body">
-								<textarea name="Description" id="description" className="textAreaWidth" onChange={ this.handleFields } placeholder="Description of Component"/>
+
+								<textarea
+									className="textAreaWidth"
+									id="description"
+									name="Description"
+									onChange={ this.handleFields }
+									placeholder="Description of Component"
+								/>
+
 							</div>
 							<div className="modal-footer">
 								<form onSubmit={ this.handleAddComponent }>
-									<button type="submit" id="changeMachine" className="btn btn-success">Resolved</button>
-									<button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
+
+									<button
+										className="btn btn-success"
+										id="changeMachine"
+										type="submit">
+										Resolved
+									</button>
+
+									<button
+										className="btn btn-danger"
+										data-dismiss="modal"
+										type="button">
+										Close
+									</button>
+
 								</form>
 							</div>
 						</div>
@@ -228,7 +270,17 @@ class Add_incident_update extends Component {
 								<label>Updated By :</label>
 							</div>
 							<div className="col-lg-offset-1">
-								<input type="text" name="UpdateBy" id="updatedBy" value={this.props.state.incidents.updateBy} onChange={ this.handleFields } placeholder="Update by" className="textBoxWidth"/>
+
+								<input
+									className="textBoxWidth"
+									id="updatedBy"
+									name="UpdateBy"
+									onChange={ this.handleFields }
+									placeholder="Update by"
+									type="text"
+									value={this.props.state.incidents.updateBy}
+								/>
+
 								<HelpBlock className="errFontStyle"> {this.state.resolvedByErr} </HelpBlock>
 							</div>
 						</div>
@@ -237,7 +289,15 @@ class Add_incident_update extends Component {
 								<label >Description :</label>
 							</div>
 							<div className="col-lg-offset-1">
-								<textarea name="Description" id="description" onChange={ this.handleFields } placeholder="Description" className="textAreaWidth" />
+
+								<textarea
+									className="textAreaWidth"
+									id="description"
+									name="Description"
+								 	onChange={ this.handleFields }
+									placeholder="Description"
+							 />
+
 							</div>
 						</div>
 					</div>

@@ -116,40 +116,85 @@ class Add_incident extends Component {
 				<h2 className="center"> Record New Incident </h2>
 				<div style={borderStyle}>
 					<div className="clearfix form-group">
+
 						<div className = "col-lg-2 col-lg-offset-2">
 							<label >Recorder*</label>
-							<input className="textboxSize" type="text" value={ this.props.props.incidents.recorder } name="Recorder" id="recorder" onChange={ this.handleFields }  placeholder="Recorder" />
+							<input
+								className="textboxSize"
+								id="recorder"
+								name="Recorder"
+								onChange={ this.handleFields }
+								placeholder="Recorder"
+								type="text"
+								value={ this.props.props.incidents.recorder }
+							/>
 							<HelpBlock className="errFontStyle"> {this.state.recorderErr} </HelpBlock>
+
 					</div>
 						<div className = "col-lg-2 col-lg-offset-2">
 							<label >Machine ( optional )</label>
-							<Select name="Machine" id="machine" clearable={false} value={ this.state.machine } options={ Machines } onChange={ this.handleMachinesChange } />
+							<Select
+							 	clearable={false}
+							 	id="machine"
+							 	name="Machine"
+							 	options={ Machines }
+						 		onChange={ this.handleMachinesChange }
+								value={ this.state.machine }
+							/>
 						</div>
 					</div>
+
 					<div className="clearfix form-group">
 						<div className="col-lg-2 col-lg-offset-2">
 							<label >Title*</label>
-							<input className="textboxSize" type="text" value={ this.props.props.incidents.title } name="Title" id="title" onChange={ this.handleFields } placeholder="Title"/>
+
+							<input
+								className="textboxSize"
+								name="Title" id="title"
+								onChange={ this.handleFields }
+								placeholder="Title"
+								type="text"
+								value={ this.props.props.incidents.title }
+						 	/>
+
 							<HelpBlock className="errFontStyle"> {this.state.titleErr} </HelpBlock>
 						</div>
 						<div className = "col-lg-2 col-lg-offset-2">
 							<label >Component*</label>
-							<Select name="form-field-name" clearable={false} value={ this.state.component } options={ Components } onChange={ this.handleComponentsChange } />
+							<Select
+								clearable={false}
+								name="form-field-name"
+								options={ Components }
+								onChange={ this.handleComponentsChange }
+								value={ this.state.component }
+							/>
 							<HelpBlock className="errFontStyle"> {this.state.componentErr} </HelpBlock>
 						</div>
 					</div>
+
 					<div className="clearfix form-group">
 						<div className="col-lg-2 col-lg-offset-2">
 							<label >Description</label>
-							<textarea className="textAreaSize" name="Description" value={ this.props.props.incidents.description }  id="description" onChange={ this.handleFields } placeholder="Description"/>
+
+							<textarea
+								className="textAreaSize"
+								id="description"
+								name="Description"
+								onChange={ this.handleFields }
+								placeholder="Description"
+								value={ this.props.props.incidents.description }
+							/>
+
 						</div>
 					</div>
+
 				</div>
 				<div className="clearfix center paddingForm">
 					<form onSubmit={ this.handleSubmit } >
 						<button className="btn btn-info btn-lg" type="submit">Submit</button>
 					</form>
 				</div>
+
 			</div>
 		)
 	}

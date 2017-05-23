@@ -1,0 +1,38 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:9.6-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_USER: postgres
+      POSTGRES_DB: cantaloupe
+
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+# cantaloupe server.
+  cantaloupe-api:
+    build:
+      context: ../cantaloupe
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_USER: postgres
+      POSTGRES_DB: cantaloupe
+      APP_HOST: postgres
+
+    links:
+      - postgres
+
+# cantaloupe front-end.
+  cantaloupe-web:
+    build:
+      context: ../cantaloupe/front-end
+    ports:
+      - "8080:4000"
+    links:
+      - cantaloupe-api
+

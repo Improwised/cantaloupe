@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// IncidentInfo : incident insformation.
 type IncidentInfo struct {
 	Id                 int
 	Component_id       int
@@ -20,6 +21,7 @@ type IncidentInfo struct {
 	Resolved_at        *time.Time
 }
 
+// AddIncident : add new incident.
 func AddIncident(data string) {
 	sess := SetupDB()
 	i := IncidentInfo{}
@@ -46,6 +48,7 @@ func AddIncident(data string) {
 	CheckErr(err4)
 }
 
+// EditIncident : edit incident.
 func EditIncident(incidentId int, componentId string, recorder string, title string, description string) {
 	sess := SetupDB()
 	query := sess.Update("incidents")
@@ -59,6 +62,7 @@ func EditIncident(incidentId int, componentId string, recorder string, title str
 		Exec()
 }
 
+// DeleteIncident : remove incident.
 func DeleteIncident(incidentId int) {
 	sess := SetupDB()
 
@@ -80,11 +84,19 @@ func DeleteIncident(incidentId int) {
 	CheckErr(err2)
 }
 
+// DisplayIncidents :  all incidents.
 func DisplayIncidents(all string) []byte {
 	sess := SetupDB()
 	incidentInfo := []IncidentInfo{}
 
-	query := sess.Select("i.id, i.title, i.description, i.status, i.recorder, components.name AS Component, components.serial_no,components.warranty_till AS Warranty_timestamp").
+	query := sess.Select(`i.id,
+                        i.title,
+                        i.description,
+                        i.status,
+                        i.recorder,
+                        components.name AS Component,
+                        components.serial_no,
+                        components.warranty_till AS Warranty_timestamp`).
 		From("incidents i").
 		LeftJoin("components", "i.component_id = components.id")
 
@@ -95,7 +107,7 @@ func DisplayIncidents(all string) []byte {
 	query.LoadStruct(&incidentInfo)
 
 	//extract only date from timestamp============================================
-	for i := 0; i < len(incidentInfo); i++ {
+	for i := 0; i < len(incidentInfo); i += 1 {
 		t := incidentInfo[i].Warranty_timestamp
 		incidentInfo[i].Warranty_till = t.Format("2006-01-02")
 	}
@@ -106,6 +118,7 @@ func DisplayIncidents(all string) []byte {
 	return b
 }
 
+// DisplayIncident : display one incident.
 func DisplayIncident(incidentId int) []byte {
 	sess := SetupDB()
 	incidentInfo := IncidentInfo{}
@@ -118,6 +131,7 @@ func DisplayIncident(incidentId int) []byte {
 	return b
 }
 
+// IncidentUpdate : updates on incident.
 type IncidentUpdate struct {
 	Id            int
 	Updated_by    string
@@ -128,6 +142,7 @@ type IncidentUpdate struct {
 	Description   string
 }
 
+// IncidentUpdates : updates on incident.
 func IncidentUpdates(incidentId int, resolvedBy string, description string, isResolved string) {
 	sess := SetupDB()
 
@@ -165,6 +180,7 @@ func IncidentUpdates(incidentId int, resolvedBy string, description string, isRe
 	}
 }
 
+// IncidentInformation : incident info.
 type IncidentInformation struct {
 	Status      string
 	Recorder    string
@@ -176,10 +192,15 @@ type IncidentInformation struct {
 	IncidentUpdates []IncidentUpdate
 }
 
+// IncidentInformations : incident info.
 func IncidentInformations(incident_id int) []byte {
 	sess := SetupDB()
 	m := IncidentInformation{}
-	err2 := sess.Select("incidents.status, incidents.recorder, incidents.component_id, components.name as Component, incidents.description").
+	err2 := sess.Select(`incidents.status,
+                       incidents.recorder,
+                       incidents.component_id,
+                       components.name as Component,
+                       incidents.Description`).
 		From("incidents").
 		LeftJoin("components", "components.id = incidents.component_id").
 		Where("incidents.id = ? ", incident_id).
@@ -192,7 +213,7 @@ func IncidentInformations(incident_id int) []byte {
 		Where("incident_id = ? ", incident_id).
 		LoadStruct(&p)
 
-	for i := 0; i < len(p); i++ {
+	for i := 0; i < len(p); i += 1 {
 		t := p[i].Created_at
 		p[i].Resolved_Date = t.Format("2006-01-02")
 	}
@@ -203,6 +224,7 @@ func IncidentInformations(incident_id int) []byte {
 	return b
 }
 
+// IncidentComponentInfo : incident information releated to component.
 type IncidentComponentInfo struct {
 	ComponentId int
 	InvoiceId   int
@@ -212,30 +234,30 @@ type IncidentComponentInfo struct {
 	CategoryId    int
 	Name          string
 	SerialNo      string
-	Warranty_till string
+	Warranty_till *time.Time
 	Description   string
 	Active        bool
 }
 
-func IncidentAddComponent(incident_id int, resolvedBy string, categoryId int, component string, serialNo string, warranty string, description string) {
+// IncidentAddComponent : add new incident on component.
+func IncidentAddComponent(incident_id int, resolvedBy string, categoryId int, component string, serialNo string, description string) {
 	sess := SetupDB()
 
 	//select component id and invoice id on which incident happen ....============
 	c := IncidentComponentInfo{}
-	sess.Select("incidents.component_id, components.invoice_id").
+	sess.Select("incidents.component_id, components.invoice_id, components.warranty_till").
 		From("incidents").
 		Join("components", "components.id = incidents.component_id").
 		Where("incidents.id = ?", incident_id).
 		LoadStruct(&c)
-		//============================================================================
+	//============================================================================
 
-		//Add replaces components after resolved ....=================================
+	//Add replaces components after resolved ....=================================
 	c.IncidentId = incident_id
 	c.UpdatedBy = resolvedBy
 	c.CategoryId = categoryId
 	c.Name = component
 	c.SerialNo = serialNo
-	c.Warranty_till = warranty
 	c.Description = description
 	c.Active = false
 
@@ -249,7 +271,7 @@ func IncidentAddComponent(incident_id int, resolvedBy string, categoryId int, co
 	//===Add resolved date in incidents table after resolved component ===========
 	_, err5 := sess.Update("incidents").
 		Set("resolved_at", "NOW()").
-		Set("status", "Resloved").
+		Set("status", "Resolved").
 		Where("id = ?", incident_id).
 		Exec()
 	CheckErr(err5)

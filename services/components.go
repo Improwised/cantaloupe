@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// DisplayAllComponents : all components.
 type DisplayAllComponents struct {
 	Id                 int
 	Serial_no          string
@@ -38,11 +39,22 @@ func removeDuplicates(elements []DisplayAllComponents) []DisplayAllComponents {
 	return result
 }
 
+// DisplayComponents : all components.
 func DisplayComponents(all string) []byte {
 	sess := SetupDB()
 	components := []DisplayAllComponents{}
 
-	query := sess.Select("c.id, c.invoice_id, c.serial_no, c.name, c.active, c.description, c.warranty_till as Warranty_timestamp, machines.name as Machine, categories.category, machine_components.component_id, machine_components.created_at").
+	query := sess.Select(`c.id,
+                        c.invoice_id,
+                        c.serial_no,
+                        c.name,
+                        c.active,
+                        c.description,
+                        c.warranty_till as Warranty_timestamp,
+                        machines.name as Machine,
+                        categories.category,
+                        machine_components.component_id,
+                        machine_components.created_at`).
 		From("components c").
 		LeftJoin("machine_components", "c.id = machine_components.component_id").
 		LeftJoin("machines", "machines.id = machine_components.machine_id").
@@ -58,7 +70,7 @@ func DisplayComponents(all string) []byte {
 	}
 
 	//extract only date from timestamp========
-	for i := 0; i < len(components); i++ {
+	for i := 0; i < len(components); i += 1 {
 		t := components[i].Warranty_timestamp
 		components[i].Warranty_till = t.Format("2006-01-02")
 	}
@@ -70,11 +82,20 @@ func DisplayComponents(all string) []byte {
 	return b
 }
 
+// FilterComponents : filter component.
 func FilterComponents(category_id int) []byte {
 	sess := SetupDB()
 	components := []DisplayAllComponents{}
 
-	query := sess.Select("c.id, c.invoice_id, c.serial_no, c.name, c.active, c.description, c.warranty_till as Warranty_timestamp, machines.name as Machine, categories.category").
+	query := sess.Select(`c.id,
+                        c.invoice_id,
+                        c.serial_no,
+                        c.name,
+                        c.active,
+                        c.description,
+                        c.warranty_till as Warranty_timestamp,
+                        machines.name as Machine,
+                        categories.category`).
 		From("components c").
 		LeftJoin("machine_components", "c.id = machine_components.component_id").
 		LeftJoin("machines", "machines.id = machine_components.machine_id").
@@ -84,7 +105,7 @@ func FilterComponents(category_id int) []byte {
 		LoadStruct(&components)
 
 	//extract only date from timestamp========
-	for i := 0; i < len(components); i++ {
+	for i := 0; i < len(components); i += 1 {
 		t := components[i].Warranty_timestamp
 		components[i].Warranty_till = t.Format("2006-01-02")
 	}
@@ -94,6 +115,7 @@ func FilterComponents(category_id int) []byte {
 	return b
 }
 
+// ComponentLog : component history.
 type ComponentLog struct {
 	Id         int
 	Machine    string
@@ -103,6 +125,7 @@ type ComponentLog struct {
 	Removed_at string
 }
 
+// DisplayComponentInfo : one component information.
 type DisplayComponentInfo struct {
 	Incidents    []Incidents
 	ComponentLog []ComponentLog
@@ -121,6 +144,7 @@ type DisplayComponentInfo struct {
 	Deleted_at           *time.Time
 }
 
+// Incidents : incident information.
 type Incidents struct {
 	Id          int
 	Title       string
@@ -129,18 +153,21 @@ type Incidents struct {
 	Status      string
 }
 
+// Machine : machine information.
 type Machine struct {
 	Id                   int
 	Name                 string
 	Machine_component_id int
 }
 
+// User : user's information.
 type User struct {
 	Id   int
 	Name string
 }
 
-func DisplayComponentInformation(ComponentId int) []byte {
+// DisplayComponentInformation : all information of component.
+func DisplayComponentInformation(componentId int) []byte {
 	sqlStmt := "invoices.id AS Invoice_id,"
 	sqlStmt += "invoices.invoice_number,"
 	sqlStmt += "components.name AS Component,"
@@ -155,7 +182,7 @@ func DisplayComponentInformation(ComponentId int) []byte {
 	err := sess.Select(sqlStmt).
 		From("invoices").
 		RightJoin("components", "invoices.id = components.invoice_id").
-		Where("components.id= ?", ComponentId).
+		Where("components.id= ?", componentId).
 		LoadStruct(&components)
 	CheckErr(err)
 
@@ -173,15 +200,17 @@ func DisplayComponentInformation(ComponentId int) []byte {
 	incidents := []Incidents{}
 	sess.Select("id, title, description, status, recorder").
 		From("incidents").
-		Where("Component_id = ?", ComponentId).
+		Where("Component_id = ?", componentId).
 		LoadStruct(&incidents)
 
 	//Get Machine Information to which component connected if connected ...
 	machine := Machine{}
-	sess.Select("machines.id, machines.Name, machine_components.id AS Machine_component_id").
+	sess.Select(`machines.id,
+               machines.Name,
+               machine_components.id AS Machine_component_id`).
 		From("machines").
 		Join("machine_components", "machine_components.machine_id = machines.id").
-		Where("machine_components.Component_id = ? AND machine_components.deleted_at IS NULL", ComponentId).
+		Where("machine_components.Component_id = ? AND machine_components.deleted_at IS NULL", componentId).
 		OrderDir("machine_components.id", false).
 		Limit(1).
 		LoadStruct(&machine)
@@ -199,14 +228,17 @@ func DisplayComponentInformation(ComponentId int) []byte {
 
 	//===== Will Give entire history of component ================================
 	log := []ComponentLog{}
-	sess.Select("machine_components.id, machines.name AS Machine, machine_components.created_at, machine_components.deleted_at").
+	sess.Select(`machine_components.id,
+               machines.name AS Machine,
+               machine_components.created_at,
+               machine_components.deleted_at`).
 		From("machine_components").
 		LeftJoin("machines", "machine_components.machine_id = machines.id").
-		Where("machine_components.component_id= ?", ComponentId).
+		Where("machine_components.component_id= ?", componentId).
 		LoadStruct(&log)
 
 	//extract only date from timestamp========
-	for i := 0; i < len(log); i++ {
+	for i := 0; i < len(log); i += 1 {
 		t := log[i].Created_at.Time
 		log[i].Added_at = t.Format("2006-01-02")
 
@@ -224,4 +256,24 @@ func DisplayComponentInformation(ComponentId int) []byte {
 	b, err5 := json.Marshal(components)
 	CheckErr(err5)
 	return b
+}
+
+// ActiveComponent : to active component.
+func ActiveComponent(componentId int) {
+	sess := SetupDB()
+	_, err := sess.Update("components").
+		Set("active", "true").
+		Where("id = ?", componentId).
+		Exec()
+	CheckErr(err)
+}
+
+// DeactiveComponent : to deactive component.
+func DeactiveComponent(componentId int) {
+	sess := SetupDB()
+	_, err := sess.Update("components").
+		Set("active", "false").
+		Where("id = ?", componentId).
+		Exec()
+	CheckErr(err)
 }

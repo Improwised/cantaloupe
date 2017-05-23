@@ -140,9 +140,11 @@ class Add_invoice extends Component {
 		const { handleSubmit, pristine, reset, submitting } = this.props
 		return (
 			<div >
+
 				<form onSubmit={ this.handleSubmit }>
-					<button className="btn btn-info " >Save</button>
+					<button className="btn btn-info floatRight" >Save</button>
 				</form>
+				<button className="btn btn-success pull-right fixPositionForAdd" onClick={this.addInputField}> Add Component </button>
 
 				<div>
 				<h2 className="center"> Add Invoice </h2>
@@ -150,34 +152,88 @@ class Add_invoice extends Component {
 					<div className="clearfix form-group">
 						<div className = "col-lg-2 col-lg-offset-2">
 							<label >Invoice*</label>
-							<input className="textboxSize" type="text" required={true} name="Invoice" id="invoice" onChange={ this.handleFieldsInvoice } placeholder="ex. 12MOUSE1811" />
+
+							<input
+								className="textboxSize"
+								id="invoice"
+								name="Invoice"
+								onChange={ this.handleFieldsInvoice }
+								placeholder="ex. 12MOUSE1811"
+								type="text"
+							/>
+
 							<HelpBlock className="errFontStyle"> {this.state.invoiceErr} </HelpBlock>
 						</div>
 						<div className = "col-lg-2 col-lg-offset-2">
 							<label >Invoicer*</label>
-							<input className="textboxSize" type="text" name="Invoicer" id="invoicer" onChange={ this.handleFieldsInvoice } placeholder="ex. Jay systems" />
+
+							<input
+								className="textboxSize"
+								id="invoicer"
+								name="Invoicer"
+								onChange={ this.handleFieldsInvoice }
+								placeholder="ex. Jay systems"
+								type="text"
+							/>
+
 							<HelpBlock className="errFontStyle"> {this.state.invoicerErr} </HelpBlock>
 						</div>
 					</div>
 					<div className="clearfix form-group">
 						<div className="col-lg-2 col-lg-offset-2">
 							<label >Invoice Date*</label>
-								<DatePicker className="textboxSize" name="Invoice_date" id="invoice_date" dateFormat="DD/MM/YYYY" selected={ invoiceDate } onChange={this.handleInvoiceDateChange} />
+
+								<DatePicker
+									className="textboxSize"
+									dateFormat="DD/MM/YYYY"
+									dropdownMode="select"
+									id="invoice_date"
+									name="Invoice_date"
+									onChange={this.handleInvoiceDateChange}
+									peekNextMonth
+									selected={ invoiceDate }
+									showYearDropdown
+									showMonthDropdown
+								/>
+
 						</div>
 						<div className = "col-lg-2 col-lg-offset-2">
 							<label >Contact*</label>
-							<input className="textboxSize" type="text" name="Contact" id="contact" onChange={ this.handleFieldsInvoice }  placeholder="ex. +91 9909970574" />
+
+							<input
+								className="textboxSize"
+								type="text" name="Contact"
+								id="contact"
+								onChange={ this.handleFieldsInvoice }
+								placeholder="ex. 9909970574"
+							/>
+
 							<HelpBlock className="errFontStyle"> {this.state.contactErr} </HelpBlock>
 						</div>
 					</div>
 					<div className="clearfix form-group">
 						<div className="col-lg-2 col-lg-offset-2">
 							<label >Description</label>
-							<textarea className="textAreaSize form-control" name="Description" id="description" onChange={ this.handleFieldsInvoice } placeholder="Description"/>
+
+							<textarea
+								className="textAreaSize form-control"
+								name="Description" id="description"
+								onChange={ this.handleFieldsInvoice }
+								placeholder="Description"
+							/>
+
 						</div>
 						<div className="col-lg-2 col-lg-offset-2">
 							<label >Address</label>
-							<textarea className="textAreaSize form-control" name="Address" id="address" onChange={ this.handleFieldsInvoice } placeholder="Address"/>
+
+							<textarea
+								className="textAreaSize form-control"
+								name="Address"
+								id="address"
+								onChange={ this.handleFieldsInvoice }
+								placeholder="Address"
+							/>
+
 						</div>
 					</div>
 				</div>
@@ -186,7 +242,6 @@ class Add_invoice extends Component {
 
 				<div className="setWidth">
 					<label className="control-label text-center">Components </label>
-					<button className="btn btn-success pull-right" onClick={this.addInputField}> Add Component </button>
 					<br/>
 					<HelpBlock className="center errFontStyle"> { this.state.componentErr } </HelpBlock>
 					<br/>
@@ -213,16 +268,60 @@ class Add_invoice extends Component {
 									</div>
 									<div>
 										<div className="clearfix" className="setPaddingleft">
-											<input type="text" className="col-lg-2 textboxSize" onChange={ this.handleFieldsComponent} id={`serial_${index}`} placeholder="Serial" />
-											<input type="text" className="col-lg-2 col-lg-offset-1 textboxSize marginRight" onChange={ this.handleFieldsComponent } id={`component_${index}`} placeholder="Component Name" />
-											<DatePicker className="col-lg-2 col-lg-offset-1 textboxSize" id={`warrantyDate_${ index }`} dateFormat="DD/MM/YYYY" selected={ date } onChange={this.handleDateChange.bind(this, index)} placeholder="Component Name"/>
+
+											<input
+												type="text"
+												className="col-lg-2 textboxSize"
+												onChange={ this.handleFieldsComponent}
+												id={`serial_${index}`}
+												placeholder="Serial"
+											/>
+
+											<input
+												type="text"
+												className="col-lg-2 col-lg-offset-1 textboxSize marginRight"
+												onChange={ this.handleFieldsComponent }
+												id={`component_${index}`}
+												placeholder="Component Name"
+											/>
+
+											<DatePicker
+												className="col-lg-2 col-lg-offset-1 textboxSize"
+												id={`warrantyDate_${ index }`}
+												dateFormat="DD/MM/YYYY"
+												selected={ date }
+												peekNextMonth
+												showYearDropdown
+												showMonthDropdown
+												dropdownMode="select"
+												onChange={this.handleDateChange.bind(this, index)}
+											/>
+
 										</div>
 										<br/>
 										<div className="clearfix">
-											<Select className="col-lg-3 pull-left" style={selectcss} id={`warrantyDate_${ index }`} value={ category } placeholder="Category" options={ categories } onChange={ this.handleCategoryChange.bind(this, index) }/>
+
+											<Select
+												className="col-lg-3 pull-left"
+												style={selectcss}
+												id={`warrantyDate_${ index }`}
+												value={ category }
+												placeholder="Category"
+												options={ categories }
+												onChange={ this.handleCategoryChange.bind(this, index) }
+												clearable={false}
+											/>
+
 											<div>
-												<textarea className="textAreaSize1 col-lg-3" name="Address" id={`description_${index}`} onChange={ this.handleFieldsComponent } placeholder="Description"/>
+												<textarea
+													className="textAreaSize1 col-lg-3"
+													name="Address"
+													id={`description_${index}`}
+													onChange={ this.handleFieldsComponent }
+													placeholder="Description"
+												/>
 											</div>
+
 										</div>
 									</div>
 									<br/>
@@ -242,4 +341,3 @@ class Add_invoice extends Component {
 export default reduxForm({
 	form: 'Add_invoice',// a unique identifier for this form
 })(Add_invoice)
-

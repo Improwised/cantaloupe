@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// MachineInfo : machine information
 type MachineInfo struct {
 	Id         int64
 	Name       string
@@ -14,6 +15,7 @@ type MachineInfo struct {
 	Deleted_at *time.Time
 }
 
+// AddNewMachine to add new machine's information.
 func AddNewMachine(name string) []byte {
 	sess := SetupDB()
 	addMachine := MachineInfo{}
@@ -37,6 +39,7 @@ func AddNewMachine(name string) []byte {
 	return b
 }
 
+// EditMachineInfo to edit machine's information.
 func EditMachineInfo(id int, name string) {
 	sess := SetupDB()
 	_, err := sess.Update("machines").
@@ -47,12 +50,13 @@ func EditMachineInfo(id int, name string) {
 	CheckErr(err)
 }
 
+// DeleteMachine to remove machine's info(soft delete).
 func DeleteMachine(machineIds string) {
 	ids := strings.Split(machineIds, ",")
 	sess := SetupDB()
 
-	//deleting mulitple users ======
-	for i := 0; i < len(ids); i++ {
+	//deleting multiple users ======
+	for i := 0; i < len(ids); i += 1 {
 		_, err := sess.Update("machines").
 			Set("deleted_at", "NOW()").
 			Where("id = ?", ids[i]).
@@ -60,7 +64,6 @@ func DeleteMachine(machineIds string) {
 		CheckErr(err)
 	}
 	//==============================
-
 }
 
 func removeDuplicatesUser(elements []MachineInfo) []MachineInfo {
@@ -82,6 +85,7 @@ func removeDuplicatesUser(elements []MachineInfo) []MachineInfo {
 	return result
 }
 
+// DisplayMachines to list down all the machines.
 func DisplayMachines(allMachiens string) []byte {
 	sess := SetupDB()
 	machinesInfo := []MachineInfo{}
@@ -106,6 +110,7 @@ func DisplayMachines(allMachiens string) []byte {
 	return b
 }
 
+// DisplayMachine to display information of specific machine.
 func DisplayMachine(id int) []byte { // Display Single machine's information ...
 	sess := SetupDB()
 	machineInfo := MachineInfo{}
@@ -122,6 +127,7 @@ func DisplayMachine(id int) []byte { // Display Single machine's information ...
 	return b
 }
 
+// AllComponents : information of all components.
 type AllComponents struct {
 	Id            *int
 	Name          *string
@@ -133,6 +139,7 @@ type AllComponents struct {
 	AddOn         string
 }
 
+// AllIncidents : all incidents info.
 type AllIncidents struct {
 	Id          *int
 	LastUpdate  *string
@@ -142,6 +149,7 @@ type AllIncidents struct {
 	Recorder    *string
 }
 
+// PastUses : history of machine.
 type PastUses struct {
 	Begin     NullTime
 	BeginDate string
@@ -150,6 +158,7 @@ type PastUses struct {
 	User      *string
 }
 
+// AllInfoOfMachine : all machines with its component and users.
 type AllInfoOfMachine struct {
 	Id         int
 	Name       string
@@ -164,6 +173,7 @@ type AllInfoOfMachine struct {
 
 // ========To Handle Null Time stamp from database...===========================
 
+// NullTime : to handle empty timestamp.
 type NullTime struct {
 	Time  time.Time
 	Valid bool // Valid is true if Time is not NULL
@@ -184,12 +194,16 @@ func (nt NullTime) Value() (driver.Value, error) {
 }
 
 //==============================================================================
-
+// DisplayMachineComponents : components releated to machine.
 func DisplayMachineComponents(machineId int, allComponents string) []byte {
 	sess := SetupDB()
 	//all machine's information ....========
 	machineInfo := AllInfoOfMachine{}
-	query2 := sess.Select("machines.id, machines.name AS Machine, users_machine.created_at, users.name, users.id AS UserId").
+	query2 := sess.Select(`machines.id,
+												machines.name AS Machine,
+												users_machine.created_at,
+												users.name,
+												users.id AS UserId`).
 		From("machines").
 		LeftJoin("users_machine", "users_machine.machine_id = machines.id").
 		LeftJoin("users", "users_machine.user_id = users.id").
@@ -203,14 +217,19 @@ func DisplayMachineComponents(machineId int, allComponents string) []byte {
 
 	//all information of machine's components ===========
 	MachineComponents := []AllComponents{}
-	query := sess.Select("components.id, components.name, components.serial_no, components.description, components.warranty_till AS Warranty, machine_components.created_at").
+	query := sess.Select(`components.id,
+												components.name,
+												components.serial_no,
+												components.description,
+												components.warranty_till AS Warranty,
+												machine_components.created_at`).
 		From("components").
 		Join("machine_components", "machine_components.component_id = components.id")
 
 	query.Where("machine_components.machine_id = ? AND machine_components.deleted_at is NULL", machineId).
 		LoadStruct(&MachineComponents)
 
-	for i := 0; i < len(MachineComponents); i++ {
+	for i := 0; i < len(MachineComponents); i += 1 {
 		time := MachineComponents[i].Created_at
 		MachineComponents[i].AddOn = time.Format("2006-01-02")
 
@@ -233,7 +252,7 @@ func DisplayMachineComponents(machineId int, allComponents string) []byte {
 		Where("users_machine.machine_id = ?", machineId).
 		LoadStruct(&pastUses)
 
-	for i := 0; i < len(pastUses); i++ {
+	for i := 0; i < len(pastUses); i += 1 {
 		t2 := pastUses[i].Begin.Time
 		pastUses[i].BeginDate = t2.Format("2006-01-02")
 
@@ -252,11 +271,13 @@ func DisplayMachineComponents(machineId int, allComponents string) []byte {
 	return b
 }
 
+// MachineComponents : machine's component.
 type MachineComponents struct {
 	MachineId   int
 	ComponentId int
 }
 
+// AddComponentsToMachine : add new component to machine.
 func AddComponentsToMachine(machineId int, componentId int) {
 	sess := SetupDB()
 	m := MachineComponents{}
@@ -281,6 +302,7 @@ func AddComponentsToMachine(machineId int, componentId int) {
 	CheckErr(err3)
 }
 
+// RemoveComponentsFromMachine : remove component from machine.
 func RemoveComponentsFromMachine(machineId int, componentId int) {
 	sess := SetupDB()
 	_, err := sess.Update("machine_components").
@@ -297,6 +319,7 @@ func RemoveComponentsFromMachine(machineId int, componentId int) {
 	CheckErr(err2)
 }
 
+// ChangeUserFromMachine : change machine's user.
 func ChangeUserFromMachine(machineId int, userId int) {
 	sess := SetupDB()
 	_, err := sess.Update("users_machine").

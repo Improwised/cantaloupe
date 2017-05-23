@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// AllInvoiceDetails : all invoices information.
 type AllInvoiceDetails struct {
 	Number          string `json:"number"`
 	Description     string `json:"description"`
@@ -23,6 +24,7 @@ type AllInvoiceDetails struct {
 	} `json:"component_details"`
 }
 
+// InvoiceDetails : invoice details.
 type InvoiceDetails struct {
 	InvoiceNumber    string
 	InvoicerName     string
@@ -32,6 +34,7 @@ type InvoiceDetails struct {
 	InvoiceDate      string
 }
 
+// ComponentsInfo : component information.
 type ComponentsInfo struct {
 	Name         string
 	SerialNo     string
@@ -42,6 +45,7 @@ type ComponentsInfo struct {
 	Active       bool
 }
 
+// AddInvoice : add new invoice.
 func AddInvoice(details string) {
 	var m AllInvoiceDetails
 	err := json.Unmarshal([]byte(details), &m) //converting JSON Object to GO structure ...
@@ -68,7 +72,7 @@ func AddInvoice(details string) {
 	c := ComponentsInfo{}
 	c.InvoiceId = recentInsertedId
 	c.Active = false
-	for i := 0; i < len(m.ComponentDetails.Name); i++ {
+	for i := 0; i < len(m.ComponentDetails.Name); i += 1 {
 		c.Name = m.ComponentDetails.Name[i]
 		c.SerialNo = m.ComponentDetails.SerialNo[i]
 		c.CategoryId = m.ComponentDetails.Category[i]
@@ -96,10 +100,10 @@ func AddInvoice(details string) {
 			Record(c).
 			Exec()
 		//==============================================================================
-
 	}
 }
 
+// DisplayInvoice : display one invoice.
 type DisplayInvoice struct {
 	Id                int
 	Invoice_number    *string
@@ -113,6 +117,7 @@ type DisplayInvoice struct {
 	Components []DisplayAllComponents
 }
 
+// DisplayInvoices : display all invoices.
 func DisplayInvoices() []byte {
 	sess := SetupDB()
 	invoicesDetails := []DisplayInvoice{}
@@ -120,7 +125,7 @@ func DisplayInvoices() []byte {
 		From("invoices").
 		LoadStruct(&invoicesDetails)
 	//extract only date from timestamp========
-	for i := 0; i < len(invoicesDetails); i++ {
+	for i := 0; i < len(invoicesDetails); i += 1 {
 		t := invoicesDetails[i].Invoice_timestamp
 		invoicesDetails[i].Invoice_date = t.Format("2006-01-02")
 	}
@@ -131,11 +136,18 @@ func DisplayInvoices() []byte {
 	return b
 }
 
+// DisplayOneInvoice : display one invoice.
 func DisplayOneInvoice(invoiceId int) []byte {
 	sess := SetupDB()
 	//===============Perticuller Invoice Details =================================
 	invoiceDetails := DisplayInvoice{}
-	sess.Select("id, invoice_number, invoicer_name, invoice_date as Invoice_timestamp, invoicer_contact AS contact, description, invoicer_add AS address").
+	sess.Select(`id,
+              invoice_number,
+              invoicer_name,
+              invoice_date as Invoice_timestamp,
+              invoicer_contact AS contact,
+              description,
+              invoicer_add AS address`).
 		From("invoices").
 		Where("id = ?", invoiceId).
 		LoadStruct(&invoiceDetails)
@@ -147,7 +159,17 @@ func DisplayOneInvoice(invoiceId int) []byte {
 
 	components := []DisplayAllComponents{}
 
-	query := sess.Select("c.id, c.invoice_id, c.serial_no, c.name, c.active, c.description, c.warranty_till as Warranty_timestamp, machines.name as Machine, categories.category, machine_components.component_id, machine_components.created_at").
+	query := sess.Select(`c.id,
+                        c.invoice_id,
+                        c.serial_no,
+                        c.name,
+                        c.active,
+                        c.description,
+                        c.warranty_till as Warranty_timestamp,
+                        machines.name as Machine,
+                        categories.category,
+                        machine_components.component_id,
+                        machine_components.created_at`).
 		From("components c").
 		LeftJoin("machine_components", "c.id = machine_components.component_id").
 		LeftJoin("machines", "machines.id = machine_components.machine_id").
@@ -158,7 +180,7 @@ func DisplayOneInvoice(invoiceId int) []byte {
 	query.LoadStruct(&components)
 
 	//extract only date from timestamp========
-	for i := 0; i < len(components); i++ {
+	for i := 0; i < len(components); i += 1 {
 		t := components[i].Warranty_timestamp
 		components[i].Warranty_till = t.Format("2006-01-02")
 	}
@@ -174,18 +196,64 @@ func DisplayOneInvoice(invoiceId int) []byte {
 	return b
 }
 
-func EditInvoice(id int, invoice string, invoicer string, address string, contact string, description string, date string) {
+// EditInvoice : edit invoice.
+func EditInvoice(id int64, details string) {
 	sess := SetupDB()
 
-	_, err := sess.Update("invoices").
-		Set("invoice_number", invoice).
-		Set("invoicer_name", invoicer).
-		Set("invoicer_add", address).
-		Set("invoicer_contact", contact).
-		Set("description", description).
-		Set("invoice_date", date).
+	var m AllInvoiceDetails
+	err := json.Unmarshal([]byte(details), &m) //converting JSON Object to GO structure ...
+	CheckErr(err)
+
+	i := InvoiceDetails{}
+	i.InvoiceNumber = m.Number
+	i.InvoicerName = m.InvoicerDetails.Name
+	i.Invoicer_add = m.InvoicerDetails.Address
+	i.Invoicer_contact = m.InvoicerDetails.Contact
+	i.Description = m.Description
+	i.InvoiceDate = m.Date
+
+	_, err2 := sess.Update("invoices").
+		Set("invoice_number", i.InvoiceNumber).
+		Set("invoicer_name", i.InvoicerName).
+		Set("invoicer_add", i.Invoicer_add).
+		Set("invoicer_contact", i.Invoicer_contact).
+		Set("description", i.Description).
+		Set("invoice_date", i.InvoiceDate).
 		Set("modified_at", "NOW()").
 		Where("id = ?", id).
 		Exec()
-	CheckErr(err)
+	CheckErr(err2)
+
+	c := ComponentsInfo{}
+	c.InvoiceId = id
+	c.Active = false
+	for i := 0; i < len(m.ComponentDetails.Name); i += 1 {
+		c.Name = m.ComponentDetails.Name[i]
+		c.SerialNo = m.ComponentDetails.SerialNo[i]
+		c.CategoryId = m.ComponentDetails.Category[i]
+		c.Description = m.ComponentDetails.Description[i]
+		c.WarrantyTill = m.ComponentDetails.WarrantyTill[i]
+		_, err3 := sess.InsertInto("components").
+			Columns("invoice_id", "serial_no", "name", "category_id", "warranty_till", "description", "active").
+			Record(c).
+			Exec()
+		CheckErr(err3)
+
+		componentId, err4 := sess.Select("MAX(id)").
+			From("components").
+			ReturnInt64()
+		CheckErr(err4)
+
+		//======insert in to machine_component table as blank entry ====================
+		type compo struct {
+			Component_id int64
+		}
+		c := compo{}
+		c.Component_id = componentId
+		sess.InsertInto("machine_components").
+			Columns("component_id").
+			Record(c).
+			Exec()
+		//==============================================================================
+	}
 }

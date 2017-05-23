@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// sess *dbr.Session = SetupDB()
+// UserInformation : user's information.
 type UserInformation struct {
 	Id            int
 	Name          string
@@ -16,16 +16,22 @@ type UserInformation struct {
 	Deleted_at    time.Time
 }
 
+// UsersMachine : user's machine.
 type UsersMachine struct {
 	User_id    int64
 	Machine_id string
 }
 
+// userInfo : user's information.
 type userInfo struct {
-	Name, Company_email, Machine_id, Machine_name string
-	Id                                            int64
+	Name          string
+	Company_email string
+	Machine_id    string
+	Machine_name  string
+	Id            int64
 }
 
+// AddNewUser : add new user.
 func AddNewUser(name string, email string, machineId string) []byte {
 	sess := SetupDB()
 	var m userInfo
@@ -68,6 +74,7 @@ func AddNewUser(name string, email string, machineId string) []byte {
 	return b
 }
 
+// EditUserInfo : edit user's information.
 func EditUserInfo(userId int, name string, company_email string, machine_id string) {
 	sess := SetupDB()
 
@@ -86,12 +93,13 @@ func EditUserInfo(userId int, name string, company_email string, machine_id stri
 	CheckErr(err2)
 }
 
+// DeleteUser : remove user (doft delete).
 func DeleteUser(userIds string) {
 	ids := strings.Split(userIds, ",")
 	sess := SetupDB()
 
-	//deleting mulitple users ======
-	for i := 0; i < len(ids); i++ {
+	//deleting multiple users ======
+	for i := 0; i < len(ids); i += 1 {
 		_, err := sess.Update("users").
 			Set("deleted_at", "NOW()").
 			Where("id = ?", ids[i]).
@@ -101,10 +109,15 @@ func DeleteUser(userIds string) {
 	//==============================
 }
 
+// DisplayUser : display one user's information.
 func DisplayUser(userId int) []byte {
 	sess := SetupDB()
 	userInfo := UserInformation{}
-	err := sess.Select("users.id, users.name, users.company_email, users_machine.machine_id, machines.name as Machine_name").
+	err := sess.Select(`users.id,
+											users.name,
+											users.company_email,
+											users_machine.machine_id,
+											machines.name as Machine_name`).
 		From("users").
 		LeftJoin("users_machine", "users.id = users_machine.user_id").
 		LeftJoin("machines", "users_machine.machine_id = machines.id").
@@ -116,10 +129,15 @@ func DisplayUser(userId int) []byte {
 	return b
 }
 
+// DisplayUsers : display all user's information.
 func DisplayUsers(allUsers string) []byte { // Display one User's Information ..
 	sess := SetupDB()
 	usersInfo := []UserInformation{}
-	query := sess.Select("users.id, users.name, users.company_email, users_machine.machine_id, machines.name as Machine_name").
+	query := sess.Select(`users.id,
+												users.name,
+												users.company_email,
+												users_machine.machine_id,
+												machines.name as Machine_name`).
 		From("users").
 		LeftJoin("users_machine", "users.id = users_machine.user_id").
 		LeftJoin("machines", "users_machine.machine_id = machines.id")

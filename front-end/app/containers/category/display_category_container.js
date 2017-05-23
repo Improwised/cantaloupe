@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import DisplayCategory from '../../components/Category/Display_category_component';
+import DisplayCategory from '../../components/category/Display_category_component';
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import * as Actions from '../../actions/actions';
