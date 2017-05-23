@@ -67,13 +67,23 @@ Add New Invoice
 
 + Request (application/json)
 
-    + Attributes
-        + invoice
-          + number : 12SOECE11230
-          + name:ashvin
-          + address:Rajkot
-          + contact:9909970574
-          + description : Invoice Description Should Mention Here
+     + Attributes
+      + invoice
+          + number : `12SOECE11230`
+          + invoicer_details
+              + name:ashvin
+              + address:Rajkot
+              + contact:9909970574
+
+          + components_detail(array)
+              - (object)
+                  - serial_no : 12SOECE11230(string)
+                  - name : Mouse(string)
+                  - category : 1(number)
+                  - warranty_till : 10/5/2017(string)
+                  - description : Nothing(string)
+
+          + description : `Invoice Description Should Mention Here`
           + date : `10-08-2016`
 
 + Response 200

@@ -1,8 +1,10 @@
 package: github.com/improwised/cantaloupe
 import:
-- package: gopkg.in/yaml.v2
 - package: github.com/fatih/structs
 - package: github.com/rs/cors
   version: ~1.0.0
 - package: github.com/gocraft/dbr
   version: v2.1
+- package: github.com/DavidHuie/gomigrate
+- package: github.com/joho/godotenv
+  version: ~1.1.0

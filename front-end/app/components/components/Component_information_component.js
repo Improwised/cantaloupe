@@ -17,22 +17,37 @@ class Component_information extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleDecommission = this.handleDecommission.bind(this);
 		this.renderDeccommission = this.renderDeccommission.bind(this);
+		this.handleActiveIt = this.handleActiveIt.bind(this);
+		this.handleDeactiveIt = this.handleDeactiveIt.bind(this);
 	}
 
 	renderDeccommission() {
 		if(this.props.props.components.Components.Deleted_at == null ) {
 			return (
 				<div className="pull-right">
-						<button type="button" className="btn btn-info marginLeftRecord setMargin" data-toggle="modal" data-target="#changeMachine">Change Machine</button>
-						<button type="button" className="btn btn-danger" onClick= {this.handleDecommission} > Decommission </button>
-				</div> );
+					<button type="button" className="btn btn-success setMargin" onClick= {this.handleActiveIt}>Active</button>
+					<button type="button" className="btn btn-danger setMargin" onClick= {this.handleDeactiveIt}>Deactive</button>
+					<button type="button" className="btn btn-info setMargin" data-toggle="modal" data-target="#changeMachine">Change Machine</button>
+					<button type="button" className="btn btn-danger" onClick= {this.handleDecommission} > Decommission </button>
+				</div>
+			);
 		}
+	}
+
+	handleActiveIt() {
+		let componentId = this.props.params.componentId;
+		this.props.actions.activeComponent(componentId)
+	}
+
+	handleDeactiveIt() {
+		let componentId = this.props.params.componentId;
+		this.props.actions.deactiveComponent(componentId)
 	}
 
 	handleDecommission() {
 		let componentId = this.props.params.componentId;
 		let machineId = this.props.props.components.Components.Machine.Id;
-		this.props.actions.decommitComponentFromMachine(componentId, machineId)
+		this.props.actions.decommitComponentFromMachine(componentId, machineId);
 	}
 
 	componentDidMount() {
@@ -50,7 +65,6 @@ class Component_information extends Component {
 	}
 
 	render() {
-
 	//=========================== styles =========================================
 
 		let borderStyle = {
@@ -87,6 +101,14 @@ class Component_information extends Component {
 			if(this.props.props.components.Components.Deleted_at != null) {
 				status = 'Decommissioned';
 			}
+
+			if(this.props.props.incidents.active == "Active") {
+				status = "Active";
+			}
+
+			if(this.props.props.incidents.active == "Deactive") {
+				status = "Deactive";
+			}
 		}
 
 		let Machines = [];
@@ -109,7 +131,13 @@ class Component_information extends Component {
 							</div>
 							<div className="modal-body">
 								<label >Select Machine</label>
-								<Select name="Machine" id="machine" value={ this.state.machine } options={ Machines } onChange={ this.handleMachinesChange } />
+								<Select
+									name="Machine"
+									id="machine"
+									value={ this.state.machine }
+									options={ Machines }
+									onChange={ this.handleMachinesChange }
+								/>
 							</div>
 							<div className="modal-footer">
 								<form onSubmit={ this.handleSubmit } >
@@ -149,8 +177,13 @@ class Component_information extends Component {
 					</div>
 					<div className="clearfix form-group">
 						<div className="col-lg-2 col-lg-offset-2">
-							<label >Description</label>
-							<textarea disabled className="textAreaSize" name="Description" value={ this.props.props.components.Components.Description } />
+							<label>Description</label>
+							<textarea
+								className="textAreaSize"
+								disabled
+								name="Description"
+								value={ this.props.props.components.Components.Description }
+							/>
 						</div>
 						<div className="col-lg-2 col-lg-offset-2">
 							<Field component={rendreLabel} label="User" name="user" /> { User }

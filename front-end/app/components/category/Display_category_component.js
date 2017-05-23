@@ -8,7 +8,7 @@ import './styles.css';
 
 function Validator(value){
 	if(!value){
-		return "*";
+		return "*required";
 	}
 	return true;
 }
@@ -51,6 +51,7 @@ class Display_category extends Component {
 
 	componentDidMount() {
 		this.props.actions.fetchCategories(false);
+		$('.modal-content').css("width", "500px");
 	}
 
 	render() {
@@ -74,32 +75,43 @@ class Display_category extends Component {
 			<div>
 				<div className="clearfix">
 					<div className="col-lg-2">
-						<Select searchable={ false } clearable={ false } placeholder="Active" className="activeStyle" value={ this.state.activeAll } options={ options } onChange={ this.filterCategory }/>
+						<Select
+							className="activeStyle"
+							clearable={ false }
+							options={ options }
+							onChange={ this.filterCategory }
+							placeholder="Active"
+							searchable={ false }
+							value={ this.state.activeAll }
+						/>
 					</div>
 				</div>
 				<div>
-					<BootstrapTable data={ categories }
-													pagination={true}
-													options={{
-														afterDeleteRow :this.deleteCategory,
-														onAddRow :this.addCategory
-													}}
-													deleteRow={true}
-													selectRow={selectRowProp}
-													insertRow={true}
-													exportCSV={true}
-													cellEdit={{
-														mode: "dbclick",
-														blurToSave: true,
-														afterSaveCell: this.editCategory
-													}}
-													search={true}
-													striped={true}
-													hover={true} >
-							<TableHeaderColumn dataField="Id" editable={false} isKey={true} autoValue={true} hidden={true} >Id</TableHeaderColumn>
-							<TableHeaderColumn width="260" dataSort={true} dataField="Category" editable={{ validator:Validator }} >Category</TableHeaderColumn>
-							<TableHeaderColumn width="350" dataSort={true} dataField="Description" editable={{ type:'textarea' }} >Description</TableHeaderColumn>
+
+					<BootstrapTable
+						data={ categories }
+						pagination={true}
+						options={{
+							afterDeleteRow :this.deleteCategory,
+							onAddRow :this.addCategory
+						}}
+						deleteRow={true}
+						selectRow={selectRowProp}
+						insertRow={true}
+						exportCSV={true}
+						cellEdit={{
+							mode: "dbclick",
+							blurToSave: true,
+							afterSaveCell: this.editCategory
+						}}
+						search={true}
+						striped={true}
+						hover={true} >
+						<TableHeaderColumn dataField="Id" editable={false} isKey={true} autoValue={true} hidden={true} >Id</TableHeaderColumn>
+						<TableHeaderColumn width="260" dataSort={true} dataField="Category" editable={{ validator:Validator }} >Category</TableHeaderColumn>
+						<TableHeaderColumn width="350" dataSort={true} dataField="Description" editable={{ type:'textarea' }} >Description</TableHeaderColumn>
 					</BootstrapTable>
+
 				</div>
 			</div>
 		)

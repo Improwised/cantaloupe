@@ -68,3 +68,10 @@
 .marginRight {
 	margin-right: 60px;
 }
+
+.fixPositionForAdd {
+	position: fixed;
+	right: 93px;
+	margin-right: 10px
+}
+

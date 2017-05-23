@@ -5,13 +5,14 @@ and generates a connection string for the github.com/lib/pq and github.com/go-sq
 package dbconfig
 
 import (
+	"os"
 	"strings"
 )
 
 /*
 Settings returns the database settings from the database.yml file from a given application
-and the corresponding application enviroment. The location to the database.yml file and
-the enviroment is configured in the settings json configuration file.
+and the corresponding application environment. The location to the database.yml file and
+the environment is configured in the settings json configuration file.
 If environment is NOT configured, you can set the environment variable APPLICATION_ENV (on os level).
 If this is also not defined "development" is the default.
 */
@@ -31,14 +32,26 @@ used by the github.com/lib/pq package like for example:
 The first parameter is the path to the database settings configuration (json) file
 and the second paramater defines the sslmode.
 */
-func PostgresConnectionString(path string, sslmode string) string {
-	settings := Settings(path)
+func PostgresConnectionString(sslmode string) string {
+	// settings := Settings(path)
+
+	// connection := []string{
+	// 	"host=", settings["host"], " ",
+	// 	"password=", settings["password"], " ",
+	// 	"user=", settings["username"], " ",
+	// 	"dbname=", settings["database"], " ",
+	// 	"sslmode=", sslmode}
+
+	host := os.Getenv("APP_HOST")
+	password := os.Getenv("PGDB_PASSWORD")
+	user := os.Getenv("PGDB_USER")
+	dbname := os.Getenv("PG_DB")
 
 	connection := []string{
-		"host=", settings["host"], " ",
-		"password=", settings["password"], " ",
-		"user=", settings["username"], " ",
-		"dbname=", settings["database"], " ",
+		"host=", host, " ",
+		"password=", password, " ",
+		"user=", user, " ",
+		"dbname=", dbname, " ",
 		"sslmode=", sslmode}
 
 	return strings.Join(connection, "")

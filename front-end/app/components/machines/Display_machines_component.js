@@ -7,7 +7,7 @@ import './styles.css';
 
 function Validator(value){
 	if(!value){
-		return "*"
+		return "*required"
 	}
 	return true;
 }
@@ -57,6 +57,7 @@ class Display_machines extends Component {
 	componentDidMount() {
 		this.props.actions.fetchMachines(false, this.props.dispatch);
 		this.props.actions.fetchUsers(false, this.props.dispatch);
+		$('.modal-content').css("width", "400px");
 	}
 
 	render() {
@@ -79,34 +80,45 @@ class Display_machines extends Component {
 	// ===========================================================================
 
 		let table;
-		table = (	<BootstrapTable data={ machines }
-													pagination={true}
-													options={{
-														afterDeleteRow: this.deleteMachine,
-														onAddRow: this.addMachine
-													}}
-													exportCSV={true}
-													deleteRow={true}
-													selectRow={selectRowProp}
-													insertRow={true}
-													cellEdit={{
-														mode: "dbclick",
-														blurToSave: true,
-														afterSaveCell: this.editMachine
-													}}
-													search={true}
-													striped={true}
-													hover={true}>
-						<TableHeaderColumn width="60"  dataSort={true} dataField="Id" editable={false} isKey={true}  autoValue={true} hidden={true} >Id</TableHeaderColumn>
-						<TableHeaderColumn width="260" dataSort={true} dataField="Name" dataFormat={machineInformation} editable={{ validator:Validator }}>Machine</TableHeaderColumn>
-						<TableHeaderColumn width="350" dataSort={true} dataField="User" editable={false} hiddenOnInsert={true} autoValue={false}>Current User</TableHeaderColumn>
-					</BootstrapTable> );
+		table = (	<BootstrapTable
+								data={ machines }
+								pagination={true}
+								options={{
+									afterDeleteRow: this.deleteMachine,
+									onAddRow: this.addMachine
+								}}
+								exportCSV={true}
+								deleteRow={true}
+								selectRow={selectRowProp}
+								insertRow={true}
+								cellEdit={{
+									mode: "dbclick",
+									blurToSave: true,
+									afterSaveCell: this.editMachine
+								}}
+								search={true}
+								striped={true}
+								hover={true}>
+								<TableHeaderColumn width="60"  dataSort={true} dataField="Id" editable={false} isKey={true}  autoValue={true} hidden={true} >Id</TableHeaderColumn>
+								<TableHeaderColumn width="260" dataSort={true} dataField="Name" dataFormat={machineInformation} editable={{ validator:Validator }}>Machine</TableHeaderColumn>
+								<TableHeaderColumn width="350" dataSort={true} dataField="User" editable={false} hiddenOnInsert={true} autoValue={false}>Current User</TableHeaderColumn>
+							</BootstrapTable> );
 
 		return (
 			<div>
 				<div className="clearfix">
 					<div className="col-lg-2">
-						<Select searchable={ false } clearable={ false } placeholder="Active" value={ this.state.activeAll } options={ options } className="activeStyle" onChange={ this.filterMachines }/>
+
+						<Select
+							searchable={ false }
+							clearable={ false }
+							placeholder="Active"
+							value={ this.state.activeAll }
+							options={ options }
+							className="activeStyle"
+							onChange={ this.filterMachines }
+						/>
+
 					</div>
 				</div>
 				<div>

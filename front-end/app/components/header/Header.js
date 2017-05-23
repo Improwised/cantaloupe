@@ -21,12 +21,12 @@ class Header extends Component {
 						</div>
 						<div className="collapse navbar-collapse" id="navbar-collapse-3">
 							<ul className="nav navbar-nav navbar-right">
+								<li><Link to={`/category`}> Categories </Link></li>
+								<li><Link to={`/machines`}> Machines </Link></li>
+								<li><Link to={`/users`}> Users </Link></li>
 								<li><Link to={`/invoices`}> Invoices </Link></li>
 								<li><Link to={`/components`}> Components </Link></li>
 								<li><Link to={`/incidents`}> Incidents </Link></li>
-								<li><Link to={`/machines`}> Machines </Link></li>
-								<li><Link to={`/users`}> Users </Link></li>
-								<li><Link to={`/category`}> Categories </Link></li>
 							</ul>
 						</div>
 					</div>

@@ -72,7 +72,14 @@ class Machine_information extends Component {
 						<h4><b> Component(s) </b></h4>
 					</div>
 					<div>
-						<BootstrapTable data={ Components } pagination={true} options={ options } search={true} striped={true} hover={true} paginationSize="5" >
+						<BootstrapTable
+							data={ Components }
+							pagination={true}
+							options={ options }
+							search={true}
+							striped={true}
+							hover={true}
+							paginationSize="5" >
 							<TableHeaderColumn width="20"  dataSort={true} dataField="Id" isKey={true}>#</TableHeaderColumn>
 							<TableHeaderColumn width="50" dataSort={true} dataField="SerialNo">Serial</TableHeaderColumn>
 							<TableHeaderColumn width="100" dataSort={true} dataField="Name">Name</TableHeaderColumn>
@@ -86,22 +93,34 @@ class Machine_information extends Component {
 						<h4><b> Incident(s) </b></h4>
 					</div>
 					<div>
-						<BootstrapTable data={ Incidents } pagination={true} options={ options } search={true} striped={true} hover={true}>
-						<TableHeaderColumn width="50"  dataSort={true} dataField="Id" isKey={true}>#</TableHeaderColumn>
-						<TableHeaderColumn width="180" dataSort={true} dataField="Title">Title</TableHeaderColumn>
-						<TableHeaderColumn width="200" dataSort={true} dataField="Description">Description</TableHeaderColumn>
-						<TableHeaderColumn width="80" dataSort={true} dataField="Recorder">Recorder</TableHeaderColumn>
-						<TableHeaderColumn width="50"  dataSort={true} dataField="Status" >Status</TableHeaderColumn>
+						<BootstrapTable
+							data={ Incidents }
+							pagination={true}
+							options={ options }
+							search={true}
+							striped={true}
+							hover={true}>
+							<TableHeaderColumn width="50"  dataSort={true} dataField="Id" isKey={true}>#</TableHeaderColumn>
+							<TableHeaderColumn width="180" dataSort={true} dataField="Title">Title</TableHeaderColumn>
+							<TableHeaderColumn width="200" dataSort={true} dataField="Description">Description</TableHeaderColumn>
+							<TableHeaderColumn width="80" dataSort={true} dataField="Recorder">Recorder</TableHeaderColumn>
+							<TableHeaderColumn width="50"  dataSort={true} dataField="Status" >Status</TableHeaderColumn>
 						</BootstrapTable>
 					</div>
 					<div className="center">
 						<h4><b> Past Uses History </b></h4>
 					</div>
 					<div>
-						<BootstrapTable data={ PastUses } options={ options } pagination={true} search={true} striped={true} hover={true}>
-						<TableHeaderColumn  dataSort={true} dataField="BeginDate" isKey={true}>Begin</TableHeaderColumn>
-						<TableHeaderColumn  dataSort={true} dataField="EndDate">End</TableHeaderColumn>
-						<TableHeaderColumn  dataSort={true} dataField="User">User</TableHeaderColumn>
+						<BootstrapTable
+							data={ PastUses }
+							options={ options }
+							pagination={true}
+							search={true}
+							striped={true}
+							hover={true}>
+							<TableHeaderColumn  dataSort={true} dataField="BeginDate" isKey={true}>Begin</TableHeaderColumn>
+							<TableHeaderColumn  dataSort={true} dataField="EndDate">End</TableHeaderColumn>
+							<TableHeaderColumn  dataSort={true} dataField="User">User</TableHeaderColumn>
 						</BootstrapTable>
 					</div>
 				</div>

@@ -110,9 +110,8 @@ Display Machine Components.
 
             {
                 "id" : "1",
-                "machine_id" : "1",
                 "name" : "mako",
-                "usingScence" : "2015-12-11",
+                "usingSince" : "2015-12-11",
                 "components":[{
                         "id" : 1,
                         "name" : "Mouse",
@@ -146,9 +145,7 @@ Display Machine Components.
     + Attributes
         + id : `1`
         + machine_id : `2`
-        + name : `mako`
         + components_id : 2
-        + components_name : `MotherBoard`
 
 + Response 201
 
@@ -165,7 +162,7 @@ Display Machine Components.
 
 + Response 204
 
-## Assign Machine to User [/machines/{machine_id}/users/{user_id}]
+## Remove User From Machine [/machines/{machine_id}/users/{user_id}]
 
 ### Remove User From Machine[DELETE]
 

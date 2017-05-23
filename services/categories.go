@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Categories : categories information.
 type Categories struct {
 	Id          int64
 	Category    string
@@ -13,11 +14,12 @@ type Categories struct {
 	Deleted_at  *time.Time
 }
 
-func AddNewCategory(category string, descritpion string) []byte {
+// AddNewCategory : add new category.
+func AddNewCategory(category string, description string) []byte {
 	sess := SetupDB()
 	var m = Categories{}
 	m.Category = category
-	m.Description = &descritpion
+	m.Description = &description
 
 	_, err := sess.InsertInto("categories").
 		Columns("category", "description").
@@ -36,24 +38,26 @@ func AddNewCategory(category string, descritpion string) []byte {
 	return b
 }
 
-func EditCategoryInfo(categoryId int, category string, descritpion string) {
+// EditCategoryInfo : edit category.
+func EditCategoryInfo(categoryId int, category string, description string) {
 	sess := SetupDB()
 
 	_, err := sess.Update("categories").
 		Set("category", category).
-		Set("description", descritpion).
+		Set("description", description).
 		Set("modified_at", "NOW()").
 		Where("id = ?", categoryId).
 		Exec()
 	CheckErr(err)
 }
 
+// DeleteCategory : remove category.
 func DeleteCategory(CategoryIds string) {
 	ids := strings.Split(CategoryIds, ",")
 	sess := SetupDB()
 
-	//deleting mulitple users ======
-	for i := 0; i < len(ids); i++ {
+	//deleting multiple categories ======
+	for i := 0; i < len(ids); i += 1 {
 		_, err := sess.Update("categories").
 			Set("deleted_at", "NOW()").
 			Where("id = ?", ids[i]).
@@ -64,13 +68,14 @@ func DeleteCategory(CategoryIds string) {
 
 }
 
-func DisplayCategories(allCategories string) []byte { // Display one User's Information ..
+// DisplayCategories : list down all categories.
+func DisplayCategories(allCategories string) []byte { // Display one category ..
 	sess := SetupDB()
 	categories := []Categories{}
 	query := sess.Select("id, category, description").
 		From("categories")
 
-	//display all users or active users only ...
+	//display all categories or active categories only ...
 	if allCategories == "false" {
 		query.Where("deleted_at IS NULL").
 			LoadStruct(&categories)
